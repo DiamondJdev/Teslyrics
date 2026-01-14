@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const lyricsRouter = require('./routes/lyrics');
@@ -10,6 +11,18 @@ const statusRouter = require('./routes/status');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
+
+// Rate limiting middleware
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: 'Too many requests from this IP, please try again later.'
+});
+
+// Apply rate limiting to all requests
+app.use(limiter);
 
 // Middleware
 app.use(cors());
