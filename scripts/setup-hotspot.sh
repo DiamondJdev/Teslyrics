@@ -95,7 +95,14 @@ EOF
 
 # Configure static IP for wireless interface
 echo "📝 Configuring static IP..."
-cat > /etc/network/interfaces.d/$INTERFACE << EOF
+INTERFACE_FILE="/etc/network/interfaces.d/$INTERFACE"
+if [ -f "$INTERFACE_FILE" ]; then
+    BACKUP_FILE="$INTERFACE_FILE.backup.$(date +%Y%m%d-%H%M%S)"
+    cp "$INTERFACE_FILE" "$BACKUP_FILE"
+    echo "   Existing interface config backed up to $BACKUP_FILE"
+fi
+
+cat > "$INTERFACE_FILE" << EOF
 auto $INTERFACE
 iface $INTERFACE inet static
     address $IP_ADDRESS

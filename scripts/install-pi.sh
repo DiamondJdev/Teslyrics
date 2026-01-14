@@ -75,8 +75,9 @@ fi
 
 # Create log directory
 echo "📁 Creating log directory..."
+CURRENT_USER="${SUDO_USER:-$USER}"
 sudo mkdir -p /var/log/teslyrics
-sudo chown pi:pi /var/log/teslyrics
+sudo chown $CURRENT_USER:$CURRENT_USER /var/log/teslyrics
 
 # Set correct permissions
 echo "🔒 Setting permissions..."

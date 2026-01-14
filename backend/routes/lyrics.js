@@ -111,6 +111,7 @@ router.delete('/:trackId', (req, res) => {
 // Search lyrics by artist or title
 router.get('/search/:query', (req, res) => {
   const { query } = req.params;
+  const decodedQuery = decodeURIComponent(query);
   const allKeys = cache.keys();
   const results = [];
   
@@ -118,7 +119,7 @@ router.get('/search/:query', (req, res) => {
     const data = cache.get(key);
     if (data) {
       const searchString = `${data.artist} ${data.title}`.toLowerCase();
-      if (searchString.includes(query.toLowerCase())) {
+      if (searchString.includes(decodedQuery.toLowerCase())) {
         results.push({
           trackId: data.trackId,
           artist: data.artist,
@@ -130,7 +131,7 @@ router.get('/search/:query', (req, res) => {
   });
   
   res.json({
-    query,
+    query: decodedQuery,
     count: results.length,
     results
   });

@@ -27,7 +27,7 @@ echo "Service will run as user: $SERVICE_USER"
 # Create log directory
 echo "📁 Creating log directory..."
 sudo mkdir -p /var/log/teslyrics
-sudo chown pi:pi /var/log/teslyrics
+sudo chown $SERVICE_USER:$SERVICE_USER /var/log/teslyrics
 
 # Create systemd service file
 SERVICE_FILE="/etc/systemd/system/teslyrics.service"

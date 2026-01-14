@@ -51,7 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // Load lyrics from API
 async function loadLyrics(trackId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/lyrics/${trackId}`);
+        const encodedTrackId = encodeURIComponent(trackId);
+        const response = await fetch(`${API_BASE_URL}/api/lyrics/${encodedTrackId}`);
         
         if (!response.ok) {
             if (response.status === 404) {
