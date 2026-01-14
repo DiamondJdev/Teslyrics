@@ -1,0 +1,32 @@
+{
+  "name": "teslyrics",
+  "version": "1.0.0",
+  "description": "Displays Apple Music lyrics in Tesla Browsers - Local Raspberry Pi Hosting",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "install-pi": "bash scripts/install-pi.sh",
+    "setup-service": "sudo bash scripts/setup-service.sh",
+    "setup-hotspot": "sudo bash scripts/setup-hotspot.sh"
+  },
+  "keywords": [
+    "tesla",
+    "lyrics",
+    "apple-music",
+    "raspberry-pi",
+    "local-hosting"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.3.1",
+    "node-cache": "^5.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
