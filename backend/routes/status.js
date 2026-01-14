@@ -3,17 +3,20 @@ const router = express.Router();
 const os = require('os');
 const { cache, getCacheStats, clearCache } = require('../cache');
 
-// Health check endpoint
-router.get('/health', (req, res) => {
-  res.json({
-    status: 'healthy',
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString()
-  });
-});
+// Cache network interfaces (they rarely change)
+let cachedNetworkInfo = null;
+let networkInfoCacheTime = 0;
+const NETWORK_CACHE_TTL = 60000; // 1 minute
 
-// System status endpoint
-router.get('/', (req, res) => {
+function getNetworkInfo() {
+  const now = Date.now();
+  
+  // Return cached info if still valid
+  if (cachedNetworkInfo && (now - networkInfoCacheTime) < NETWORK_CACHE_TTL) {
+    return cachedNetworkInfo;
+  }
+  
+  // Refresh network info
   const networkInterfaces = os.networkInterfaces();
   const addresses = [];
   
@@ -28,6 +31,25 @@ router.get('/', (req, res) => {
       }
     });
   });
+  
+  cachedNetworkInfo = addresses;
+  networkInfoCacheTime = now;
+  
+  return addresses;
+}
+
+// Health check endpoint
+router.get('/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
+
+// System status endpoint
+router.get('/', (req, res) => {
+  const addresses = getNetworkInfo();
   
   res.json({
     status: 'running',

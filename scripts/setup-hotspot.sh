@@ -105,9 +105,10 @@ systemctl enable hostapd
 systemctl enable dnsmasq
 
 # Update .env file if it exists
-if [ -f /home/pi/teslyrics/.env ]; then
+PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+if [ -f "$PROJECT_DIR/.env" ]; then
     echo "📝 Updating .env file..."
-    sed -i "s/^PI_IP=.*/PI_IP=$IP_ADDRESS/" /home/pi/teslyrics/.env
+    sed -i "s/^PI_IP=.*/PI_IP=$IP_ADDRESS/" "$PROJECT_DIR/.env"
 fi
 
 echo ""

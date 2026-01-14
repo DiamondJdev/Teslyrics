@@ -210,11 +210,12 @@ window.addEventListener('beforeunload', () => {
     if (statusTimer) clearInterval(statusTimer);
 });
 
-// Expose API for iOS app integration
+// Expose limited API for iOS app integration
 window.TeslyricsAPI = {
     loadLyrics,
     clearDisplay,
-    getCurrentTrackId: () => currentTrackId
+    getCurrentTrackId: () => currentTrackId,
+    version: '1.0.0'
 };
 
 console.log('Teslyrics app ready! 🚗🎵');

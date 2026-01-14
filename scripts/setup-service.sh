@@ -39,7 +39,7 @@ Type=simple
 User=$SERVICE_USER
 WorkingDirectory=$PROJECT_DIR
 Environment=NODE_ENV=production
-EnvironmentFile=$PROJECT_DIR/.env
+EnvironmentFile=-$PROJECT_DIR/.env
 ExecStart=/usr/bin/node $PROJECT_DIR/backend/server.js
 Restart=always
 RestartSec=10
