@@ -24,6 +24,11 @@ echo "Project directory: $PROJECT_DIR"
 SERVICE_USER="${SUDO_USER:-pi}"
 echo "Service will run as user: $SERVICE_USER"
 
+# Create log directory
+echo "📁 Creating log directory..."
+sudo mkdir -p /var/log/teslyrics
+sudo chown pi:pi /var/log/teslyrics
+
 # Create systemd service file
 SERVICE_FILE="/etc/systemd/system/teslyrics.service"
 echo "📝 Creating systemd service file at $SERVICE_FILE..."

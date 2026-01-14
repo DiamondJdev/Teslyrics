@@ -71,7 +71,11 @@ echo 'DAEMON_CONF="/etc/hostapd/hostapd.conf"' > /etc/default/hostapd
 
 # Configure dnsmasq
 echo "📝 Configuring dnsmasq..."
-mv /etc/dnsmasq.conf /etc/dnsmasq.conf.backup 2>/dev/null || true
+if [ -f /etc/dnsmasq.conf ]; then
+    BACKUP_FILE="/etc/dnsmasq.conf.backup.$(date +%Y%m%d-%H%M%S)"
+    mv /etc/dnsmasq.conf "$BACKUP_FILE"
+    echo "   Original config backed up to $BACKUP_FILE"
+fi
 
 cat > /etc/dnsmasq.conf << EOF
 # Interface to listen on

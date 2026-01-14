@@ -1,11 +1,9 @@
 // Configuration
 const API_BASE_URL = window.location.origin;
-const POLL_INTERVAL = 5000; // 5 seconds
 const STATUS_UPDATE_INTERVAL = 10000; // 10 seconds
 
 // State
 let currentTrackId = null;
-let pollTimer = null;
 let statusTimer = null;
 
 // DOM Elements
@@ -206,7 +204,6 @@ function handleMessage(event) {
 
 // Cleanup on page unload
 window.addEventListener('beforeunload', () => {
-    if (pollTimer) clearInterval(pollTimer);
     if (statusTimer) clearInterval(statusTimer);
 });
 

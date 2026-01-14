@@ -52,7 +52,7 @@ sudo apt-get install -y \
     wpasupplicant
 
 # Navigate to project directory
-PROJECT_DIR="/home/pi/teslyrics"
+PROJECT_DIR="${PROJECT_DIR:-$HOME/teslyrics}"
 if [ ! -d "$PROJECT_DIR" ]; then
     echo "⚠️  Project directory not found at $PROJECT_DIR"
     echo "Please clone the repository first:"
