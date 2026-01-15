@@ -17,10 +17,8 @@ import {
 } from 'react-native';
 import { Track, ConnectionStatus } from '../types';
 import { teslyricsClient } from '../services/TeslyricsClient';
-import { AppleMusicService } from '../services/AppleMusicService';
+import { appleMusicService } from '../services/AppleMusicService';
 import { storageService } from '../services/StorageService';
-
-const appleMusicService = new AppleMusicService();
 
 export const MainScreen: React.FC = () => {
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);

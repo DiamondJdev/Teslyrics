@@ -98,7 +98,7 @@ export class TeslyricsClient {
   /**
    * Get cache statistics
    */
-  async getCacheStats() {
+  async getCacheStats(): Promise<any> {
     try {
       const response = await this.client.get('/api/status/cache');
       return response.data;
