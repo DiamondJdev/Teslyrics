@@ -28,11 +28,14 @@ export const MainScreen: React.FC = () => {
   });
   const [isMonitoring, setIsMonitoring] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [isFetchingLyrics, setIsFetchingLyrics] = useState(false);
   const [cachedSongsCount, setCachedSongsCount] = useState(0);
   const [autoSync, setAutoSync] = useState(true);
+  const [autoFetchLyrics, setAutoFetchLyrics] = useState(true);
   const [serverUrl, setServerUrl] = useState('http://192.168.4.1:3000');
   const [editingServerUrl, setEditingServerUrl] = useState(false);
   const [lyricsInput, setLyricsInput] = useState('');
+  const [lyricsSource, setLyricsSource] = useState<string>('');
 
   // Load settings on mount
   useEffect(() => {
@@ -124,17 +127,37 @@ export const MainScreen: React.FC = () => {
 
     setIsSyncing(true);
     try {
-      // Use manual lyrics input if provided, otherwise try to fetch
+      // Use manual lyrics input if provided, otherwise try to fetch automatically
       let lyrics = lyricsInput;
       
-      if (!lyrics) {
-        lyrics = await appleMusicService.fetchLyrics(track) || '';
+      if (!lyrics && autoFetchLyrics) {
+        setIsFetchingLyrics(true);
+        setLyricsSource('Fetching from lyrics providers...');
+        
+        const lyricsResult = await appleMusicService.fetchLyrics(track);
+        
+        setIsFetchingLyrics(false);
+        
+        if (lyricsResult) {
+          // Use synced lyrics if available, otherwise plain lyrics
+          lyrics = lyricsResult.synced && lyricsResult.syncedLyrics
+            ? lyricsResult.syncedLyrics.map(line => line.text).join('\n')
+            : lyricsResult.lyrics;
+          
+          const confidence = Math.round(lyricsResult.confidence * 100);
+          setLyricsSource(`Auto-fetched from ${lyricsResult.source} (${confidence}% match${lyricsResult.synced ? ', synced' : ''})`);
+          
+          // Show lyrics in the input field so user can review/edit
+          setLyricsInput(lyrics);
+        } else {
+          setLyricsSource('');
+        }
       }
 
       if (!lyrics) {
         Alert.alert(
           'No Lyrics',
-          'No lyrics available. Please paste lyrics manually in the text field below.',
+          'Could not auto-fetch lyrics. Please paste lyrics manually in the text field below.',
           [{ text: 'OK' }]
         );
         setIsSyncing(false);
@@ -264,12 +287,21 @@ export const MainScreen: React.FC = () => {
 
       {/* Manual Lyrics Input */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Manual Lyrics (Optional)</Text>
+        <Text style={styles.sectionTitle}>Lyrics</Text>
+        {isFetchingLyrics && (
+          <View style={styles.fetchingStatus}>
+            <ActivityIndicator size="small" color="#2196F3" />
+            <Text style={styles.fetchingText}>Auto-fetching lyrics...</Text>
+          </View>
+        )}
+        {lyricsSource && !isFetchingLyrics && (
+          <Text style={styles.lyricsSource}>{lyricsSource}</Text>
+        )}
         <TextInput
           style={styles.lyricsInput}
           value={lyricsInput}
           onChangeText={setLyricsInput}
-          placeholder="Paste lyrics here if not automatically available..."
+          placeholder="Lyrics will auto-fetch when you play a song, or paste manually here..."
           multiline
           numberOfLines={6}
           textAlignVertical="top"
@@ -278,6 +310,11 @@ export const MainScreen: React.FC = () => {
 
       {/* Controls */}
       <View style={styles.section}>
+        <View style={styles.settingRow}>
+          <Text style={styles.settingLabel}>Auto-fetch lyrics</Text>
+          <Switch value={autoFetchLyrics} onValueChange={setAutoFetchLyrics} />
+        </View>
+        
         <View style={styles.settingRow}>
           <Text style={styles.settingLabel}>Auto-sync on track change</Text>
           <Switch value={autoSync} onValueChange={toggleAutoSync} />
@@ -329,13 +366,16 @@ export const MainScreen: React.FC = () => {
           3. Play a song in Apple Music
         </Text>
         <Text style={styles.instructionText}>
-          4. Paste lyrics manually or tap "Send Lyrics to Tesla"
+          4. Lyrics will auto-fetch (or paste manually if needed)
         </Text>
         <Text style={styles.instructionText}>
-          5. Open Tesla browser to {serverUrl}
+          5. Tap "Send Lyrics to Tesla" or enable "Auto-sync"
         </Text>
         <Text style={styles.instructionText}>
-          6. Enable "Auto-Monitoring" for automatic sync
+          6. Open Tesla browser to {serverUrl}
+        </Text>
+        <Text style={styles.instructionText}>
+          7. Enable "Auto-Monitoring" for hands-free operation
         </Text>
       </View>
     </ScrollView>
@@ -455,6 +495,25 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 14,
     minHeight: 120,
+  },
+  fetchingStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    padding: 8,
+    backgroundColor: '#E3F2FD',
+    borderRadius: 4,
+  },
+  fetchingText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: '#2196F3',
+  },
+  lyricsSource: {
+    fontSize: 12,
+    color: '#4CAF50',
+    marginBottom: 8,
+    fontStyle: 'italic',
   },
   buttonRow: {
     flexDirection: 'row',

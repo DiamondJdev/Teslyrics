@@ -8,6 +8,7 @@ export interface Track {
   title: string;
   album?: string;
   lyrics?: string;
+  duration?: number; // Duration in seconds
 }
 
 export interface LyricsRequest {

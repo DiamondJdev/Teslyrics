@@ -5,6 +5,7 @@
 
 import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 import { Track } from '../types';
+import { lyricsProviderService, LyricsResult } from './LyricsProviderService';
 
 const { AppleMusicModule } = NativeModules;
 
@@ -80,19 +81,26 @@ export class AppleMusicService {
   }
 
   /**
-   * Fetch lyrics for a track
-   * Note: MediaPlayer doesn't provide lyrics API
-   * This would need integration with a third-party lyrics API
-   * or manual user input
+   * Fetch lyrics for a track using automatic provider selection
+   * Tries LRCLib, Genius, and other providers with failsafes
    */
-  async fetchLyrics(track: Track): Promise<string | null> {
-    // Placeholder for lyrics fetching
-    // In production, integrate with:
-    // - Genius API
-    // - Musixmatch API
-    // - Or allow manual input
-    console.log(`Lyrics fetching not implemented for: ${track.artist} - ${track.title}`);
-    return null;
+  async fetchLyrics(track: Track): Promise<LyricsResult | null> {
+    console.log(`Auto-fetching lyrics for: ${track.artist} - ${track.title}`);
+    
+    try {
+      const result = await lyricsProviderService.fetchLyrics(track);
+      
+      if (result) {
+        console.log(`Lyrics fetched from ${result.source} with ${Math.round(result.confidence * 100)}% confidence`);
+        return result;
+      }
+      
+      console.warn('No lyrics found from any provider');
+      return null;
+    } catch (error) {
+      console.error('Error fetching lyrics:', error);
+      return null;
+    }
   }
 
   /**

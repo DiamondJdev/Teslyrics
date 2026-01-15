@@ -14,6 +14,14 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 // Mock NativeEventEmitter
 jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter');
 
+// Mock axios for lyrics API calls
+jest.mock('axios', () => ({
+  create: jest.fn(() => ({
+    get: jest.fn(() => Promise.resolve({ data: [] })),
+    post: jest.fn(() => Promise.resolve({ data: {} })),
+  })),
+}));
+
 // Mock native modules
 jest.mock('react-native', () => {
   const RN = jest.requireActual('react-native');
