@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teslyrics - Lyrics Display</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎵 Teslyrics</h1>
+            <div class="status-indicator" id="statusIndicator">
+                <span class="status-dot"></span>
+                <span id="statusText">Connected</span>
+            </div>
+        </header>
+
+        <div class="content">
+            <!-- Song Info Section -->
+            <div class="song-info" id="songInfo">
+                <div class="song-title" id="songTitle">No song playing</div>
+                <div class="song-artist" id="songArtist">Connect from your iOS app</div>
+            </div>
+
+            <!-- Lyrics Display Section -->
+            <div class="lyrics-container" id="lyricsContainer">
+                <div class="lyrics-placeholder">
+                    <p>🎤</p>
+                    <p>Lyrics will appear here</p>
+                    <p class="help-text">Use the Teslyrics iOS app to send lyrics from Apple Music</p>
+                </div>
+            </div>
+
+            <!-- Controls Section -->
+            <div class="controls">
+                <button id="refreshBtn" class="btn">
+                    <span>↻</span> Refresh
+                </button>
+                <button id="clearBtn" class="btn">
+                    <span>✕</span> Clear
+                </button>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-info">
+                <span id="cacheCount">0 songs cached</span>
+                <span class="separator">•</span>
+                <span id="serverInfo">Loading...</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
