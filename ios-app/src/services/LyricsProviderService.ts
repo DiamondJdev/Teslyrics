@@ -88,11 +88,11 @@ export class LyricsProviderService {
   async fetchLyrics(track: Track): Promise<LyricsResult | null> {
     console.log(`Fetching lyrics for: ${track.artist} - ${track.title}`);
     
-    // Try providers in order of preference
+    // Try providers in order of preference (exclude inactive providers)
     const providers = [
       () => this.fetchFromLRCLib(track),
-      () => this.fetchFromGenius(track),
-      // Musixmatch would go here if API key is available
+      // Genius commented out until lyrics extraction is implemented
+      // () => this.fetchFromGenius(track),
     ];
     
     for (const provider of providers) {
@@ -210,7 +210,7 @@ export class LyricsProviderService {
     const lines = lrcContent.split('\n');
     const syncedLyrics: SyncedLyric[] = [];
     
-    // LRC format: [mm:ss.xx]lyrics text
+    // LRC format: [mm:ss.xx]lyrics text or [mm:ss.xxx]lyrics text
     const lrcPattern = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
     
     for (const line of lines) {
@@ -218,9 +218,19 @@ export class LyricsProviderService {
       if (match) {
         const minutes = parseInt(match[1], 10);
         const seconds = parseInt(match[2], 10);
-        const centiseconds = parseInt(match[3].padEnd(3, '0'), 10);
+        const fraction = match[3];
         
-        const timeMs = (minutes * 60 * 1000) + (seconds * 1000) + (centiseconds * 10);
+        // Handle both 2-digit (centiseconds) and 3-digit (milliseconds) formats
+        let milliseconds: number;
+        if (fraction.length === 2) {
+          // Centiseconds: multiply by 10
+          milliseconds = parseInt(fraction, 10) * 10;
+        } else {
+          // Milliseconds: use directly
+          milliseconds = parseInt(fraction, 10);
+        }
+        
+        const timeMs = (minutes * 60 * 1000) + (seconds * 1000) + milliseconds;
         const text = match[4].trim();
         
         if (text) {
@@ -275,8 +285,11 @@ export class LyricsProviderService {
     let confidence = this.calculateMatchScore(result, track);
     
     // Reduce confidence if duration differs significantly
+    // Note: Both durations should be in seconds
     if (track.duration && result.duration) {
-      const durationDiff = Math.abs((track.duration * 1000) - result.duration);
+      const trackDurationMs = track.duration * 1000;
+      const resultDurationMs = result.duration * 1000; // LRCLib returns duration in seconds
+      const durationDiff = Math.abs(trackDurationMs - resultDurationMs);
       if (durationDiff > this.config.durationToleranceMs) {
         confidence *= 0.7; // Reduce confidence by 30%
       }
@@ -366,12 +379,13 @@ export class LyricsProviderService {
    */
   formatSyncedLyricsToLRC(syncedLyrics: SyncedLyric[]): string {
     return syncedLyrics.map(line => {
-      const totalSeconds = line.time / 1000;
-      const minutes = Math.floor(totalSeconds / 60);
-      const seconds = Math.floor(totalSeconds % 60);
-      const centiseconds = Math.floor((totalSeconds % 1) * 100);
+      const totalMilliseconds = line.time;
+      const minutes = Math.floor(totalMilliseconds / 60000);
+      const seconds = Math.floor((totalMilliseconds % 60000) / 1000);
+      const milliseconds = totalMilliseconds % 1000;
       
-      return `[${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(centiseconds).padStart(2, '0')}]${line.text}`;
+      // Use 3-digit milliseconds for precision
+      return `[${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(3, '0')}]${line.text}`;
     }).join('\n');
   }
 

@@ -19,6 +19,7 @@ import { Track, ConnectionStatus } from '../types';
 import { teslyricsClient } from '../services/TeslyricsClient';
 import { appleMusicService } from '../services/AppleMusicService';
 import { storageService } from '../services/StorageService';
+import { lyricsProviderService } from '../services/LyricsProviderService';
 
 export const MainScreen: React.FC = () => {
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
@@ -141,7 +142,7 @@ export const MainScreen: React.FC = () => {
         if (lyricsResult) {
           // Use synced lyrics if available, otherwise plain lyrics
           lyrics = lyricsResult.synced && lyricsResult.syncedLyrics
-            ? lyricsResult.syncedLyrics.map(line => line.text).join('\n')
+            ? lyricsProviderService.formatSyncedLyricsToPlain(lyricsResult.syncedLyrics)
             : lyricsResult.lyrics;
           
           const confidence = Math.round(lyricsResult.confidence * 100);
