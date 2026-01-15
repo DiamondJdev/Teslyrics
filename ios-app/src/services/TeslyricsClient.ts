@@ -90,7 +90,7 @@ export class TeslyricsClient {
         timeout: 5000,
       });
       return response.status === 200;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

@@ -3,7 +3,7 @@
  * Shows currently playing track, connection status, and sync controls
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -41,12 +41,14 @@ export const MainScreen: React.FC = () => {
     loadSettings();
     checkConnection();
     requestMusicAuthorization();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-check connection periodically
   useEffect(() => {
     const interval = setInterval(checkConnection, 10000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serverUrl]);
 
   const loadSettings = async () => {
@@ -187,7 +189,7 @@ export const MainScreen: React.FC = () => {
           <View
             style={[
               styles.statusIndicator,
-              { backgroundColor: connectionStatus.connected ? '#4CAF50' : '#F44336' },
+              connectionStatus.connected ? styles.statusConnected : styles.statusDisconnected,
             ]}
           />
           <Text style={styles.statusText}>
@@ -389,6 +391,12 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
     marginRight: 8,
+  },
+  statusConnected: {
+    backgroundColor: '#4CAF50',
+  },
+  statusDisconnected: {
+    backgroundColor: '#F44336',
   },
   statusText: {
     fontSize: 16,
