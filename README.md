@@ -92,8 +92,14 @@ Teslyrics is a local hosting solution that brings synchronized lyrics from Apple
 ### With Your iPhone
 
 1. Connect to the same Teslyrics WiFi network
-2. Use the companion app to send lyrics from Apple Music
-3. Lyrics are cached on the Pi for instant display in your Tesla
+2. Install and launch the Teslyrics iOS app (see `ios-app/` directory)
+3. Grant Apple Music permissions
+4. Play a song in Apple Music
+5. Paste lyrics manually in the app or use auto-sync features
+6. Tap "Send Lyrics to Tesla" or enable auto-monitoring
+7. Lyrics are cached on the Pi for instant display in your Tesla
+
+For detailed iOS app setup, see [ios-app/README.md](ios-app/README.md)
 
 ## 🛠️ API Endpoints
 
@@ -179,7 +185,7 @@ See the [Setup Guide](docs/SETUP.md) for detailed troubleshooting.
 - [x] WiFi hotspot configuration
 - [x] Auto-start service
 - [x] Lyrics caching
-- [ ] iOS companion app
+- [x] iOS companion app (React Native)
 - [ ] Real-time sync with timestamps
 - [ ] WebSocket support
 - [ ] Persistent storage (SQLite)
@@ -203,4 +209,4 @@ MIT License - See LICENSE file for details
 
 ---
 
-**Note**: This project requires a companion iOS app to send lyrics from Apple Music. See the [iOS Integration Guide](docs/IOS_INTEGRATION.md) for development instructions.
+**Note**: This project includes a companion iOS app (in `ios-app/` directory) to send lyrics from Apple Music. See the [iOS App README](ios-app/README.md) and [iOS Integration Guide](docs/IOS_INTEGRATION.md) for setup and development instructions.
